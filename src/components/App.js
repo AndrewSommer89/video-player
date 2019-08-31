@@ -10,6 +10,10 @@ class App extends React.Component{
         videos: [],
         selectedVideo: null
      };
+
+     componentDidMount(){
+         this.onTermSubmit('St.Louis Blues')
+     }
 // When submitted run this function
     onTermSubmit = async (term) => {
         const response = await youtube.get('/search', {
@@ -19,7 +23,11 @@ class App extends React.Component{
         });
     
     //Set the state to the videos that you get back from the API
-        this.setState({videos: response.data.items})
+        this.setState({
+            videos: response.data.items,
+        // Set the first video in the list to the selected video
+            selectedVideo: response.data.items[0]
+        })
     };
 
     onVideoSelect = (video) => {
@@ -30,8 +38,16 @@ class App extends React.Component{
         return (
             <div className="ui container">
                 <SearchBar onTermSubmit={this.onTermSubmit} />
-                <VideoDetail video={this.state.selectedVideo} />
-                <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={this.state.selectedVideo} />
+                        </div>
+                        <div className="five wide column">
+                            <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
